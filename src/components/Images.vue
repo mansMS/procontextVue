@@ -16,7 +16,9 @@
       </div>
     </div>
     <template v-if="displayedImagesCount < images.length">
-      <button v-on:click="addImages">Еще</button>
+      <div class="AddImage">
+        <button v-on:click="addImages">Еще</button>
+      </div>
     </template>
   </section>
 </template>
@@ -88,6 +90,17 @@ export default {
         opacity: 1;
         cursor: pointer;
       }
+    }
+  }
+
+  .AddImage {
+    text-align: center;
+
+    button {
+      width: 80px;
+      height: 40px;
+      border: 1px solid #c2c2e5;
+      background: none;
     }
   }
 }
