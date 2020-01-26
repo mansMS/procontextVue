@@ -1,6 +1,11 @@
 <template>
   <section class="Photographers">
-    <template v-if="users.length">
+    <template v-if="loading">
+      <div class="Spinner">
+        <Spinner />
+      </div>
+    </template>
+    <template v-else-if="users.length">
       <ul class="PhotographersList">
         <li
           v-for="user in users"
@@ -19,11 +24,18 @@
 
 
 <script>
+import Spinner from "./Spinner";
+
 export default {
   name: "Photographers",
   props: {
     users: Array,
-    userId: String
+    userId: String,
+    loading: Boolean
+  },
+
+  components: {
+    Spinner
   }
 };
 </script>
@@ -54,6 +66,10 @@ export default {
     .selected {
       background-color: #cfcfe1;
     }
+  }
+
+  .Spinner {
+    text-align: center;
   }
 }
 </style>

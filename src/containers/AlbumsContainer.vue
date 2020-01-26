@@ -3,6 +3,7 @@
     v-bind:albums="albums"
     v-bind:userId="userId"
     v-bind:albumId="albumId"
+    v-bind:loading="loading"
     v-on:select-album="$emit('select-album', $event)"
   />
 </template>
@@ -12,44 +13,50 @@ import Albums from "../components/Albums.vue";
 
 export default {
   name: "AlbumsContainer",
-  updated() {
-    if (this.id !== this.userId && this.userId) {
-      this.fetchData(this.userId);
-      this.id = this.userId;
-    }
-  },
+
   props: ["userId", "albumId"],
+
   data() {
     return {
-      id: "",
       albumsList: {},
-      albums: []
+      albums: [],
+      loading: false
     };
   },
+
+  watch: {
+    userId(id) {
+      this.fetchData(id);
+    }
+  },
+
   methods: {
     fetchData: async function(userId) {
-      let self = this;
       if (userId in this.albumsList) {
-        self.albums = this.albumsList[userId];
+        this.albums = this.albumsList[userId];
       } else {
+        this.loading = true;
         const getAlbums = new Request(
           `https://jsonplaceholder.typicode.com/albums/?userId=${userId}`
         );
 
-        fetch(getAlbums)
+        await fetch(getAlbums)
           .then(response => {
             return response.json();
           })
           .then(data => {
-            self.albums = data;
-            self.albumsList[userId] = data;
+            this.albums = data;
+            this.albumsList[userId] = data;
           })
           .catch(error => {
             console.log(error);
           });
+
+        this.loading = false;
       }
     }
   },
+
   components: {
     Albums
   }

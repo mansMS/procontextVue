@@ -2,6 +2,7 @@
   <Photographers
     v-bind:users="users"
     v-bind:userId="userId"
+    v-bind:loading="loading"
     v-on:select-user="$emit('select-user', $event)"
   />
 </template>
@@ -11,35 +12,42 @@ import Photographers from "../components/Photographers.vue";
 
 export default {
   name: "PhotographersContainer",
+
+  props: ["userId"],
+
+  data() {
+    return {
+      users: [],
+      loading: false
+    };
+  },
+
   mounted() {
     this.fetchData();
   },
-  props: ["userId"],
-  data() {
-    return {
-      users: []
-    };
-  },
+
   methods: {
     fetchData: async function() {
-      let self = this;
+      this.loading = true;
       const getUsers = new Request(
         "https://jsonplaceholder.typicode.com/users"
       );
 
-      fetch(getUsers)
+      await fetch(getUsers)
         .then(response => {
           return response.json();
         })
         .then(data => {
-          self.users = data;
-          // console.log(self.users);
+          this.users = data;
         })
         .catch(error => {
           console.log(error);
         });
+
+      this.loading = false;
     }
   },
+
   components: {
     Photographers
   }

@@ -1,6 +1,11 @@
 <template>
   <section class="Images">
-    <template v-if="imageId">
+    <template v-if="loading">
+      <div class="Spinner">
+        <Spinner />
+      </div>
+    </template>
+    <template v-else-if="imageId">
       <SelectedImage v-bind:imageURL="images.filter(image => image.id+'' === imageId)[0].url" />
     </template>
     <div class="ImagesList">
@@ -25,15 +30,18 @@
 
 <script>
 import SelectedImage from "./SelectedImage.vue";
+import Spinner from "./Spinner";
 
 export default {
   name: "Images",
   components: {
-    SelectedImage
+    SelectedImage,
+    Spinner
   },
   props: {
     images: Array,
-    imageId: String
+    imageId: String,
+    loading: Boolean
   },
   data() {
     return {
@@ -102,6 +110,10 @@ export default {
       border: 1px solid #c2c2e5;
       background: none;
     }
+  }
+
+  .Spinner {
+    text-align: center;
   }
 }
 </style>

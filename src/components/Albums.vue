@@ -1,6 +1,11 @@
 <template>
   <section class="Albums">
-    <template v-if="albums.length">
+    <template v-if="loading">
+      <div class="Spinner">
+        <Spinner />
+      </div>
+    </template>
+    <template v-else-if="albums.length">
       <ul class="AlbumsList">
         <li>
           <input v-model="filterInput" class="AlbumInput" placeholder="Введине название альбома" />
@@ -17,11 +22,14 @@
 </template>
 
 <script>
+import Spinner from "./Spinner";
+
 export default {
   name: "Albums",
   props: {
     albums: Array,
-    albumId: String
+    albumId: String,
+    loading: Boolean
   },
   data() {
     return {
@@ -37,6 +45,10 @@ export default {
           .includes(self.filterInput.toUpperCase());
       });
     }
+  },
+
+  components: {
+    Spinner
   }
 };
 </script>
@@ -76,6 +88,10 @@ export default {
     .selected {
       background-color: #cfcfe1;
     }
+  }
+
+  .Spinner {
+    text-align: center;
   }
 }
 </style>
