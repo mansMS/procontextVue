@@ -36,17 +36,14 @@ export default {
         this.albums = this.albumsList[userId];
       } else {
         this.loading = true;
-        const getAlbums = new Request(
-          `https://jsonplaceholder.typicode.com/albums/?userId=${userId}`
-        );
 
-        await fetch(getAlbums)
+        const axios = require("axios");
+
+        await axios
+          .get(`https://jsonplaceholder.typicode.com/albums/?userId=${userId}`)
           .then(response => {
-            return response.json();
-          })
-          .then(data => {
-            this.albums = data;
-            this.albumsList[userId] = data;
+            this.albums = response.data;
+            this.albumsList[userId] = response.data;
           })
           .catch(error => {
             console.log(error);

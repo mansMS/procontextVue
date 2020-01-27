@@ -14,6 +14,7 @@
       v-bind:imageId="imageId"
       v-on:select-image="imageId = $event"
     />
+    <PostsContainer />
   </div>
 </template>
 
@@ -21,6 +22,7 @@
 import PhotographersContainer from "./containers/PhotographersContainer.vue";
 import AlbumsContainer from "./containers/AlbumsContainer.vue";
 import ImagesContainer from "./containers/ImagesContainer.vue";
+import PostsContainer from "./containers/PostsContainer.vue";
 
 export default {
   name: "app",
@@ -34,7 +36,8 @@ export default {
   components: {
     PhotographersContainer,
     AlbumsContainer,
-    ImagesContainer
+    ImagesContainer,
+    PostsContainer
   }
 };
 </script>
@@ -46,29 +49,27 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
 
-  width: 95%;
-  max-width: 1400px;
+  /* width: 95%; */
+  /* max-width: 1400px; */
   margin: 30px auto;
   display: grid;
-  grid-template-columns: 3fr 5fr;
+  grid-template-columns: 3fr 5fr 3fr;
+  grid-template-rows: auto 1fr;
   grid-template-areas:
-    "Photographers Albums"
-    "Images Images";
+    "Photographers Albums Posts"
+    "Images Images Posts";
   grid-gap: 2vw;
-
-  /* @include respond-to(handhelds) {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "Photographers"
-      "Albums"
-      "Images";
-  } */
 }
 
 @media (max-width: 600px) {
   .App {
     grid-template-columns: 1fr;
-    grid-template-areas: "Photographers" "Albums" "Images";
+    grid-template-areas: "Posts Photographers" "Albums" "Images";
   }
+}
+
+body {
+  margin: 0;
+  margin-left: 20px;
 }
 </style>

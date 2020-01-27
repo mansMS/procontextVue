@@ -26,6 +26,7 @@ export default {
 
   watch: {
     albumId(id) {
+      this.images = [];
       this.fetchData(id);
     }
   },
@@ -36,17 +37,14 @@ export default {
         this.images = this.imagesList[albumId];
       } else {
         this.loading = true;
-        const getImages = new Request(
-          `https://jsonplaceholder.typicode.com/photos?albumId=${albumId}`
-        );
 
-        fetch(getImages)
+        const axios = require("axios");
+
+        await axios
+          .get(`https://jsonplaceholder.typicode.com/photos?albumId=${albumId}`)
           .then(response => {
-            return response.json();
-          })
-          .then(data => {
-            this.images = data;
-            this.imagesList[albumId] = data;
+            this.images = response.data;
+            this.imagesList[albumId] = response.data;
           })
           .catch(error => {
             console.log(error);

@@ -29,16 +29,14 @@ export default {
   methods: {
     fetchData: async function() {
       this.loading = true;
-      const getUsers = new Request(
-        "https://jsonplaceholder.typicode.com/users"
-      );
 
-      await fetch(getUsers)
-        .then(response => {
-          return response.json();
-        })
-        .then(data => {
-          this.users = data;
+      const axios = require("axios");
+
+      await axios
+        .get("https://jsonplaceholder.typicode.com/users")
+        .then(response => (this.users = response.data))
+        .catch(error => {
+          console.log(error);
         })
         .catch(error => {
           console.log(error);
