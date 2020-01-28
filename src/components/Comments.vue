@@ -19,7 +19,7 @@
         class="CreateComment-Area"
         placeholder="Введите комментарий"
         :value="newComment"
-        @input="$emit('new-comment', $event)"
+        @input="$emit('update:new-comment', $event.target.value)"
       />
       <button class="CreateComment-Button" @click.prevent="$emit('create-comment')">Отправить</button>
     </div>

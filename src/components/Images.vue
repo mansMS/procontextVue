@@ -17,7 +17,7 @@
             :src="image.thumbnailUrl"
             alt="thumbnailImage"
             class="ImagesList-Item"
-            @click="$emit('select-image', image.id+'')"
+            @click="$emit('update:image-id', image.id+'')"
           />
         </div>
       </div>
@@ -32,6 +32,7 @@
 
 <script>
 import Spinner from "./Spinner";
+import axios from "axios";
 
 export default {
   name: "Images",
@@ -39,13 +40,15 @@ export default {
     Spinner
   },
   props: {
-    images: Array,
-    imageId: String,
-    loading: Boolean
+    albumId: String,
+    imageId: String
   },
   data() {
     return {
-      displayedImagesCount: 10
+      imagesList: {},
+      images: [],
+      displayedImagesCount: 10,
+      loading: false
     };
   },
   computed: {
@@ -56,9 +59,36 @@ export default {
       return this.images.filter(image => image.id + "" === this.imageId)[0].url;
     }
   },
+  watch: {
+    albumId(id) {
+      this.images = [];
+      this.fetchData(id);
+    }
+  },
+
   methods: {
     addImages() {
       this.displayedImagesCount += 10;
+    },
+
+    fetchData: async function(albumId) {
+      if (albumId in this.imagesList) {
+        this.images = this.imagesList[albumId];
+      } else {
+        this.loading = true;
+
+        await axios
+          .get(`https://jsonplaceholder.typicode.com/photos?albumId=${albumId}`)
+          .then(response => {
+            this.images = response.data;
+            this.imagesList[albumId] = response.data;
+          })
+          .catch(error => {
+            console.log(error);
+          });
+
+        this.loading = false;
+      }
     }
   }
 };

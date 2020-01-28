@@ -9,29 +9,7 @@
           >{{showForm ? '&times;' : '+'}}</button>
         </div>
 
-        <form v-if="showForm" class="AddPostForm">
-          <div>
-            <input
-              class="AddPostForm-Area"
-              placeholder="Введите название поста"
-              :value="postTitle"
-              @input="$emit('update:post-title', $event.target.value)"
-            />
-          </div>
-          <div>
-            <textarea
-              class="AddPostForm-Area"
-              rows="5"
-              placeholder="Введите текст поста"
-              :value="postBody"
-              @input="$emit('update:post-body', $event.target.value)"
-            />
-          </div>
-          <button
-            class="AddPostForm-Button"
-            @click.prevent="$emit('create-post'); showForm=false"
-          >Добавить</button>
-        </form>
+        <AddPostForm v-if="showForm" @newPostData="createPost($event)" />
       </div>
       <template v-if="loading">
         <div class="Spinner">
@@ -42,12 +20,12 @@
         <div>
           <ul class="PostsList">
             <li
-              v-for="post in posts"
+              v-for="post in paginatedPosts"
               :key="post.id"
               :class="[post.id+'' === selectedPostId+'' && 'PostsList-SelectedPost', 'PostItem']"
             >
               <div
-                @click="$emit('update:selected-post-id', post.id+'' === selectedPostId+'' ? '' : post.id+'')"
+                @click="post.id+'' === selectedPostId+'' ? selectedPostId = '' : selectedPostId = post.id+''"
               >
                 <p class="PostItem-CommentTitle">{{ post.title }}</p>
                 <p>{{ post.body }}</p>
@@ -56,18 +34,13 @@
               <div v-if="post.id+'' === selectedPostId+''">
                 <Comments
                   :comments="comments"
-                  :newComment="newComment"
-                  @new-comment="$emit('update:new-comment', $event.target.value)"
-                  @create-comment="$emit('create-comment', post.id)"
+                  :new-comment.sync="newComment"
+                  @create-comment="createComment(post.id)"
                 />
               </div>
             </li>
           </ul>
-          <Pagination
-            :pageNumber="pageNumber"
-            :pageCount="pageCount"
-            @page-number="$emit('update:page-number', $event)"
-          />
+          <Pagination :pageCount="pageCount" :page-number.sync="pageNumber" />
         </div>
       </template>
     </div>
@@ -78,29 +51,113 @@
 import Spinner from "./Spinner";
 import Comments from "./Comments.vue";
 import Pagination from "./Pagination.vue";
+import AddPostForm from "./AddPostForm.vue";
+import axios from "axios";
+
+const POST_PAGE_SIZE = 3;
 
 export default {
   name: "Posts",
   components: {
     Comments,
     Pagination,
+    AddPostForm,
     Spinner
-  },
-  props: {
-    posts: Array,
-    comments: Array,
-    selectedPostId: String,
-    pageNumber: Number,
-    pageCount: Number,
-    postTitle: String,
-    postBody: String,
-    newComment: String,
-    loading: Boolean
   },
   data() {
     return {
-      showForm: false
+      showForm: false,
+      posts: [],
+      selectedPostId: "",
+      comments: [],
+      pageNumber: 1,
+      newComment: "",
+      loading: false
     };
+  },
+  mounted() {
+    this.fetchPosts();
+  },
+  watch: {
+    selectedPostId(id) {
+      id && this.fetchComments(id);
+      this.newComment = "";
+    }
+  },
+  computed: {
+    pageCount: function() {
+      return Math.ceil(this.posts.length / POST_PAGE_SIZE);
+    },
+    paginatedPosts: function() {
+      return this.posts.slice(
+        (this.pageNumber - 1) * POST_PAGE_SIZE,
+        (this.pageNumber - 1) * POST_PAGE_SIZE + POST_PAGE_SIZE
+      );
+    }
+  },
+  methods: {
+    fetchPosts: async function() {
+      this.loading = true;
+
+      await axios
+        .get("https://jsonplaceholder.typicode.com/posts")
+        .then(response => {
+          this.posts = response.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+
+      this.loading = false;
+    },
+
+    fetchComments: async function(id) {
+      await axios
+        .get(`https://jsonplaceholder.typicode.com/posts/${id}/comments`)
+        .then(response => {
+          this.comments = response.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+
+    createPost: async function({ postTitle, postBody }) {
+      this.showForm = false;
+      const newPostObj = {
+        id: this.posts.length + 1,
+        userId: 12345,
+        title: postTitle,
+        body: postBody
+      };
+      axios
+        .put(
+          `https://jsonplaceholder.typicode.com/posts/${newPostObj.id}`,
+          newPostObj
+        )
+        .then(response => console.log(response.status))
+        .catch(error => console.log(error));
+    },
+
+    createComment: async function(postId) {
+      console.log(this.newComment);
+      if (this.newComment.trim().length) {
+        const newCommentObj = {
+          id: this.comments.length + 1,
+          email: "qwerty@mail.ru",
+          name: "NameName",
+          body: this.newComment
+        };
+        axios
+          .put(
+            `https://jsonplaceholder.typicode.com/posts/${postId}/comments`,
+            newCommentObj
+          )
+          .then(response => console.log(response.status))
+          .catch(error => console.log(error));
+      }
+      this.newComment = "";
+    }
   }
 };
 </script>

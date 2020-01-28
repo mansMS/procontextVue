@@ -18,7 +18,7 @@
           v-for="album in filterAlbums"
           :key="album.id"
           :class="[album.id+'' === albumId && 'selectedRecord', 'RecordItem']"
-          @click="$emit('select-album', album.id+'')"
+          @click="$emit('update:album-id', album.id+'')"
         >{{ album.title }}</li>
       </ul>
     </template>
@@ -27,6 +27,7 @@
 
 <script>
 import Spinner from "./Spinner";
+import axios from "axios";
 
 export default {
   name: "Albums",
@@ -34,13 +35,15 @@ export default {
     Spinner
   },
   props: {
-    albums: Array,
-    albumId: String,
-    loading: Boolean
+    userId: String,
+    albumId: String
   },
   data() {
     return {
-      filterInput: ""
+      albumsList: {},
+      albums: [],
+      filterInput: "",
+      loading: false
     };
   },
   computed: {
@@ -51,6 +54,33 @@ export default {
           .toUpperCase()
           .includes(self.filterInput.toUpperCase());
       });
+    }
+  },
+  watch: {
+    userId(id) {
+      this.fetchData(id);
+    }
+  },
+
+  methods: {
+    fetchData: async function(userId) {
+      if (userId in this.albumsList) {
+        this.albums = this.albumsList[userId];
+      } else {
+        this.loading = true;
+
+        await axios
+          .get(`https://jsonplaceholder.typicode.com/albums/?userId=${userId}`)
+          .then(response => {
+            this.albums = response.data;
+            this.albumsList[userId] = response.data;
+          })
+          .catch(error => {
+            console.log(error);
+          });
+
+        this.loading = false;
+      }
     }
   }
 };

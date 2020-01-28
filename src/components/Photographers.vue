@@ -11,7 +11,7 @@
           v-for="user in users"
           :key="user.id"
           :class="[user.id === +userId && 'selectedRecord', 'RecordItem']"
-          @click="$emit('select-user', user.id+'')"
+          @click="$emit('update:user-id', user.id+'')"
         >{{ user.name }}</li>
       </ul>
     </template>
@@ -25,6 +25,7 @@
 
 <script>
 import Spinner from "./Spinner";
+import axios from "axios";
 
 export default {
   name: "Photographers",
@@ -32,9 +33,34 @@ export default {
     Spinner
   },
   props: {
-    users: Array,
-    userId: String,
-    loading: Boolean
+    userId: String
+  },
+  data() {
+    return {
+      users: [],
+      loading: false
+    };
+  },
+  mounted() {
+    this.fetchData();
+  },
+
+  methods: {
+    fetchData: async function() {
+      this.loading = true;
+
+      await axios
+        .get("https://jsonplaceholder.typicode.com/users")
+        .then(response => (this.users = response.data))
+        .catch(error => {
+          console.log(error);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+
+      this.loading = false;
+    }
   }
 };
 </script>

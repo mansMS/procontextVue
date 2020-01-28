@@ -1,26 +1,26 @@
 <template>
   <div class="App">
-    <PhotographersContainer :userId="userId" :select-user.sync="userId" />
-    <AlbumsContainer :userId="userId" :albumId="albumId" :select-album.sync="albumId" />
-    <ImagesContainer :albumId="albumId" :imageId="imageId" :select-image.sync="imageId" />
-    <PostsContainer />
+    <Photographers :user-id.sync="userId" />
+    <Albums :userId="userId" :album-id.sync="albumId" />
+    <Images :albumId="albumId" :image-id.sync="imageId" />
+    <Posts />
   </div>
 </template>
 
 <script>
-import PhotographersContainer from "./containers/PhotographersContainer.vue";
-import AlbumsContainer from "./containers/AlbumsContainer.vue";
-import ImagesContainer from "./containers/ImagesContainer.vue";
-import PostsContainer from "./containers/PostsContainer.vue";
+import Photographers from "./components/Photographers.vue";
+import Albums from "./components/Albums.vue";
+import Images from "./components/Images.vue";
+import Posts from "./components/Posts.vue";
 
 export default {
   name: "app",
 
   components: {
-    PhotographersContainer,
-    AlbumsContainer,
-    ImagesContainer,
-    PostsContainer
+    Photographers,
+    Albums,
+    Images,
+    Posts
   },
 
   data() {
