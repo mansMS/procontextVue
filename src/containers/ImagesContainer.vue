@@ -1,7 +1,6 @@
 <template>
   <Images
     :images="images"
-    :albumId="albumId"
     :imageId="imageId"
     :loading="loading"
     @select-image="$emit('update:select-image', $event)"

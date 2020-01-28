@@ -70,4 +70,8 @@ body {
   margin: 0;
   margin-left: 20px;
 }
+
+.Spinner {
+  text-align: center;
+}
 </style>

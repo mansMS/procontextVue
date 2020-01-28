@@ -6,11 +6,11 @@
       </div>
     </template>
     <template v-else-if="users.length">
-      <ul class="PhotographersList">
+      <ul class="RecordList">
         <li
           v-for="user in users"
           :key="user.id"
-          :class="[user.id === +userId && 'selected', 'PhotographerItem']"
+          :class="[user.id === +userId && 'selectedRecord', 'RecordItem']"
           @click="$emit('select-user', user.id+'')"
         >{{ user.name }}</li>
       </ul>
@@ -39,36 +39,30 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .Photographers {
   grid-area: Photographers;
+}
 
-  .PhotographersList {
-    border: 1px solid #c2c2e5;
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
+.RecordList {
+  border: 1px solid #c2c2e5;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+.RecordItem {
+  padding: 10px 20px;
+  cursor: pointer;
 
-    .PhotographerItem {
-      padding: 10px 20px;
-      cursor: pointer;
-
-      &:hover {
-        background-color: #e6e6fa;
-      }
-
-      & + .PhotographerItem {
-        border-top: 1px solid #d8d8ff;
-      }
-    }
-
-    .selected {
-      background-color: #cfcfe1;
-    }
+  & + .RecordItem {
+    border-top: 1px solid #d8d8ff;
   }
 
-  .Spinner {
-    text-align: center;
+  &:hover {
+    background-color: #e6e6fa;
   }
+}
+.selectedRecord {
+  background-color: #cfcfe1;
 }
 </style>

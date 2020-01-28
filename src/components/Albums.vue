@@ -6,14 +6,18 @@
       </div>
     </template>
     <template v-else-if="albums.length">
-      <ul class="AlbumsList">
+      <ul class="RecordList">
         <li>
-          <input v-model="filterInput" class="AlbumInput" placeholder="Введине название альбома" />
+          <input
+            v-model="filterInput"
+            class="Albums-FilterInput"
+            placeholder="Введине название альбома"
+          />
         </li>
         <li
           v-for="album in filterAlbums"
           :key="album.id"
-          :class="[album.id+'' === albumId && 'selected', 'AlbumItem']"
+          :class="[album.id+'' === albumId && 'selectedRecord', 'RecordItem']"
           @click="$emit('select-album', album.id+'')"
         >{{ album.title }}</li>
       </ul>
@@ -52,45 +56,17 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" >
 .Albums {
   grid-area: Albums;
 
-  .AlbumsList {
-    border: 1px solid #c2c2e5;
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-
-    .AlbumInput {
-      box-sizing: border-box;
-      width: 100%;
-      padding: 10px 20px;
-      font-size: 16px;
-      border: none;
-      border-bottom: 1px solid #d8d8ff;
-    }
-
-    .AlbumItem {
-      padding: 10px 20px;
-      cursor: pointer;
-
-      &:hover {
-        background-color: #e6e6fa;
-      }
-
-      & + .AlbumItem {
-        border-top: 1px solid #d8d8ff;
-      }
-    }
-
-    .selected {
-      background-color: #cfcfe1;
-    }
-  }
-
-  .Spinner {
-    text-align: center;
+  &-FilterInput {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-bottom: 1px solid #d8d8ff;
   }
 }
 </style>

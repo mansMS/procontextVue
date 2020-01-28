@@ -1,26 +1,27 @@
 <template>
-  <div class="CommentsBlock">
+  <div>
     <ul class="CommentsList">
       <li
         v-for="comment in comments.slice(0, displayedCommentsCount)"
         :key="comment.id"
-        class="CommentItem"
+        class="CommentsList-Item"
       >
         <p>{{comment.email}}</p>
         <p>{{comment.body}}</p>
         <p>{{comment.name}}</p>
       </li>
-      <li v-if="displayedCommentsCount < comments.length" class="AddComments">
-        <button @click.stop="addComments">еще</button>
-      </li>
+      <div v-if="displayedCommentsCount < comments.length" class="AddCommentsBlock">
+        <button class="AddCommentsBlock-AddButton" @click.stop="addComments">еще</button>
+      </div>
     </ul>
     <div class="CreateComment">
       <input
+        class="CreateComment-Area"
         placeholder="Введите комментарий"
         :value="newComment"
         @input="$emit('new-comment', $event)"
       />
-      <button @click.prevent="$emit('create-comment')">Отправить</button>
+      <button class="CreateComment-Button" @click.prevent="$emit('create-comment')">Отправить</button>
     </div>
   </div>
 </template>
@@ -47,7 +48,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .CommentsList {
   list-style-type: none;
   padding: 0;
@@ -56,26 +57,25 @@ export default {
   padding: 0 10px;
   cursor: default;
 
-  .CommentItem {
+  &-Item {
     border-top: 1px solid #484848;
   }
+}
+.AddCommentsBlock {
+  text-align: center;
 
-  .AddComments {
-    border: none;
-    text-align: center;
-
-    button {
-      padding: 3px 8px;
-      border: 1px solid #d8d8ff;
-      background: #fff;
-      cursor: pointer;
-    }
+  &-AddButton {
+    padding: 3px 8px;
+    border: 1px solid #d8d8ff;
+    background: #fff;
+    cursor: pointer;
   }
 }
 
 .CreateComment {
   display: flex;
-  input {
+
+  &-Area {
     border: 1px solid #d8d8ff;
     flex-grow: 2;
     line-height: 20px;
@@ -83,7 +83,7 @@ export default {
     border-right: 0px solid #d8d8ff;
   }
 
-  button {
+  &-Button {
     border: 1px solid #d8d8ff;
     background: #fff;
   }
