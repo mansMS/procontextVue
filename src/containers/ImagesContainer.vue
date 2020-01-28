@@ -4,7 +4,7 @@
     :albumId="albumId"
     :imageId="imageId"
     :loading="loading"
-    @select-image="$emit('select-image', $event)"
+    @select-image="$emit('update:select-image', $event)"
   />
 </template>
 
@@ -14,6 +14,10 @@ import axios from "axios";
 
 export default {
   name: "ImagesContainer",
+
+  components: {
+    Images
+  },
 
   props: ["albumId", "imageId"],
 
@@ -52,10 +56,6 @@ export default {
         this.loading = false;
       }
     }
-  },
-
-  components: {
-    Images
   }
 };
 </script>

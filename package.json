@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
+    "bem-vue": "^0.1.8",
     "core-js": "^3.4.4",
     "vue": "^2.6.10"
   },

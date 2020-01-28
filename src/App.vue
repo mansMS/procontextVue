@@ -1,15 +1,8 @@
 <template>
   <div class="App">
-    <PhotographersContainer
-      :userId="userId"
-      @select-user="userId = $event; albumId=''; imageId=''"
-    />
-    <AlbumsContainer
-      :userId="userId"
-      :albumId="albumId"
-      @select-album="albumId = $event; imageId=''"
-    />
-    <ImagesContainer :albumId="albumId" :imageId="imageId" @select-image="imageId = $event" />
+    <PhotographersContainer :userId="userId" :select-user.sync="userId" />
+    <AlbumsContainer :userId="userId" :albumId="albumId" :select-album.sync="albumId" />
+    <ImagesContainer :albumId="albumId" :imageId="imageId" :select-image.sync="imageId" />
     <PostsContainer />
   </div>
 </template>
@@ -22,6 +15,14 @@ import PostsContainer from "./containers/PostsContainer.vue";
 
 export default {
   name: "app",
+
+  components: {
+    PhotographersContainer,
+    AlbumsContainer,
+    ImagesContainer,
+    PostsContainer
+  },
+
   data() {
     return {
       userId: "",
@@ -29,11 +30,15 @@ export default {
       imageId: ""
     };
   },
-  components: {
-    PhotographersContainer,
-    AlbumsContainer,
-    ImagesContainer,
-    PostsContainer
+
+  watch: {
+    userId() {
+      this.albumId = "";
+      this.imageId = "";
+    },
+    albumId() {
+      this.imageId = "";
+    }
   }
 };
 </script>
@@ -44,9 +49,6 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-
-  /* width: 95%; */
-  /* max-width: 1400px; */
   margin: 30px auto;
   display: grid;
   grid-template-columns: 3fr 5fr 3fr;

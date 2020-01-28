@@ -2,13 +2,12 @@
   <Posts
     :comments="comments"
     :posts="paginatedPosts"
-    :pageNumber="pageNumber"
     :pageCount="pageCount"
     :selected-post-id.sync="selectedPostId"
     :post-title.sync="postTitle"
     :post-body.sync="postBody"
     :new-comment.sync="newComment"
-    :go-to-page.sync="pageNumber"
+    :page-number.sync="pageNumber"
     @create-post="createPost()"
     @create-comment="createComment($event)"
     :loading="loading"
@@ -23,6 +22,10 @@ const POST_PAGE_SIZE = 3;
 
 export default {
   name: "PostsContainer",
+
+  components: {
+    Posts
+  },
 
   data() {
     return {
@@ -125,10 +128,6 @@ export default {
       }
       this.newComment = "";
     }
-  },
-
-  components: {
-    Posts
   }
 };
 </script>

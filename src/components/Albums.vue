@@ -26,6 +26,9 @@ import Spinner from "./Spinner";
 
 export default {
   name: "Albums",
+  components: {
+    Spinner
+  },
   props: {
     albums: Array,
     albumId: String,
@@ -45,10 +48,6 @@ export default {
           .includes(self.filterInput.toUpperCase());
       });
     }
-  },
-
-  components: {
-    Spinner
   }
 };
 </script>

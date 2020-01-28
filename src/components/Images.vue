@@ -48,14 +48,14 @@ export default {
       displayedImagesCount: 10
     };
   },
-  methods: {
-    addImages() {
-      this.displayedImagesCount += 10;
-    }
-  },
   computed: {
     filterImages() {
       return this.images.slice(0, this.displayedImagesCount);
+    }
+  },
+  methods: {
+    addImages() {
+      this.displayedImagesCount += 10;
     }
   }
 };

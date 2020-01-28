@@ -61,7 +61,7 @@
           <Pagination
             :pageNumber="pageNumber"
             :pageCount="pageCount"
-            @go-to-page="$emit('update:go-to-page', $event)"
+            @page-number="$emit('update:page-number', $event)"
           />
         </div>
       </template>

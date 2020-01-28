@@ -28,14 +28,13 @@ import Spinner from "./Spinner";
 
 export default {
   name: "Photographers",
+  components: {
+    Spinner
+  },
   props: {
     users: Array,
     userId: String,
     loading: Boolean
-  },
-
-  components: {
-    Spinner
   }
 };
 </script>

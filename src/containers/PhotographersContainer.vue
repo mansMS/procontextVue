@@ -3,7 +3,7 @@
     :users="users"
     :userId="userId"
     :loading="loading"
-    @select-user="$emit('select-user', $event)"
+    @select-user="$emit('update:select-user', $event)"
   />
 </template>
 
@@ -13,6 +13,10 @@ import axios from "axios";
 
 export default {
   name: "PhotographersContainer",
+
+  components: {
+    Photographers
+  },
 
   props: ["userId"],
 
@@ -43,10 +47,6 @@ export default {
 
       this.loading = false;
     }
-  },
-
-  components: {
-    Photographers
   }
 };
 </script>

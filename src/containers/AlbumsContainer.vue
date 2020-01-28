@@ -4,7 +4,7 @@
     :userId="userId"
     :albumId="albumId"
     :loading="loading"
-    @select-album="$emit('select-album', $event)"
+    @select-album="$emit('update:select-album', $event)"
   />
 </template>
 
@@ -14,6 +14,10 @@ import axios from "axios";
 
 export default {
   name: "AlbumsContainer",
+
+  components: {
+    Albums
+  },
 
   props: ["userId", "albumId"],
 
@@ -51,10 +55,6 @@ export default {
         this.loading = false;
       }
     }
-  },
-
-  components: {
-    Albums
   }
 };
 </script>
