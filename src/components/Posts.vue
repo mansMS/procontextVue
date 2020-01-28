@@ -4,54 +4,46 @@
       <div class="AddPost">
         <div class="AddPost-ButtonBlock">
           <button
-            @click="showForm = !showForm"
-            :class="[showForm ? 'AddPost-Open' : 'AddPost-Close', 'AddPost-AddButton']"
-          >{{showForm ? '&times;' : '+'}}</button>
+            @click="showAddForm = !showAddForm"
+            :class="[showAddForm ? 'AddPost-Open' : 'AddPost-Close', 'AddPost-AddButton']"
+          >{{showAddForm ? '&times;' : '+'}}</button>
         </div>
 
-        <AddPostForm v-if="showForm" @newPostData="createPost($event)" />
+        <AddPostForm v-if="showAddForm" @newPostData="createPost($event)" />
       </div>
-      <template v-if="loading">
-        <div class="Spinner">
-          <Spinner />
-        </div>
-      </template>
-      <template v-else>
-        <div>
-          <ul class="PostsList">
-            <li
-              v-for="post in paginatedPosts"
-              :key="post.id"
-              :class="[post.id+'' === selectedPostId+'' && 'PostsList-SelectedPost', 'PostItem']"
+      <div v-if="loading" class="Spinner">
+        <Spinner />
+      </div>
+      <div v-else>
+        <ul class="PostsList">
+          <li
+            v-for="post in paginatedPosts"
+            :key="post.id"
+            :class="[post.id+'' === selectedPostId+'' && 'PostsList-SelectedPost', 'PostItem']"
+          >
+            <div
+              @click="post.id+'' === selectedPostId+'' ? selectedPostId = '' : selectedPostId = post.id+''"
             >
-              <div
-                @click="post.id+'' === selectedPostId+'' ? selectedPostId = '' : selectedPostId = post.id+''"
-              >
-                <p class="PostItem-CommentTitle">{{ post.title }}</p>
-                <p>{{ post.body }}</p>
-              </div>
+              <p class="PostItem-CommentTitle">{{ post.title }}</p>
+              <p>{{ post.body }}</p>
+            </div>
 
-              <div v-if="post.id+'' === selectedPostId+''">
-                <Comments
-                  :comments="comments"
-                  :new-comment.sync="newComment"
-                  @create-comment="createComment(post.id)"
-                />
-              </div>
-            </li>
-          </ul>
-          <Pagination :pageCount="pageCount" :page-number.sync="pageNumber" />
-        </div>
-      </template>
+            <div v-if="post.id+'' === selectedPostId+''">
+              <Comments :postId="selectedPostId" />
+            </div>
+          </li>
+        </ul>
+        <Pagination :pageCount="pageCount" :page-number.sync="pageNumber" />
+      </div>
     </div>
   </section>
 </template>
 
 <script>
-import Spinner from "./Spinner";
 import Comments from "./Comments.vue";
 import Pagination from "./Pagination.vue";
 import AddPostForm from "./AddPostForm.vue";
+import Spinner from "./Spinner";
 import axios from "axios";
 
 const POST_PAGE_SIZE = 3;
@@ -66,23 +58,15 @@ export default {
   },
   data() {
     return {
-      showForm: false,
+      showAddForm: false,
       posts: [],
       selectedPostId: "",
-      comments: [],
       pageNumber: 1,
-      newComment: "",
       loading: false
     };
   },
   mounted() {
     this.fetchPosts();
-  },
-  watch: {
-    selectedPostId(id) {
-      id && this.fetchComments(id);
-      this.newComment = "";
-    }
   },
   computed: {
     pageCount: function() {
@@ -111,19 +95,8 @@ export default {
       this.loading = false;
     },
 
-    fetchComments: async function(id) {
-      await axios
-        .get(`https://jsonplaceholder.typicode.com/posts/${id}/comments`)
-        .then(response => {
-          this.comments = response.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    },
-
     createPost: async function({ postTitle, postBody }) {
-      this.showForm = false;
+      this.showAddForm = false;
       const newPostObj = {
         id: this.posts.length + 1,
         userId: 12345,
@@ -137,26 +110,6 @@ export default {
         )
         .then(response => console.log(response.status))
         .catch(error => console.log(error));
-    },
-
-    createComment: async function(postId) {
-      console.log(this.newComment);
-      if (this.newComment.trim().length) {
-        const newCommentObj = {
-          id: this.comments.length + 1,
-          email: "qwerty@mail.ru",
-          name: "NameName",
-          body: this.newComment
-        };
-        axios
-          .put(
-            `https://jsonplaceholder.typicode.com/posts/${postId}/comments`,
-            newCommentObj
-          )
-          .then(response => console.log(response.status))
-          .catch(error => console.log(error));
-      }
-      this.newComment = "";
     }
   }
 };

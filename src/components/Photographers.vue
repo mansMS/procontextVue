@@ -1,23 +1,17 @@
 <template>
   <section class="Photographers">
-    <template v-if="loading">
-      <div class="Spinner">
-        <Spinner />
-      </div>
-    </template>
-    <template v-else-if="users.length">
-      <ul class="RecordList">
-        <li
-          v-for="user in users"
-          :key="user.id"
-          :class="[user.id === +userId && 'selectedRecord', 'RecordItem']"
-          @click="$emit('update:user-id', user.id+'')"
-        >{{ user.name }}</li>
-      </ul>
-    </template>
-    <template v-else>
-      <p>Нет данных</p>
-    </template>
+    <div v-if="loading" class="Spinner">
+      <Spinner />
+    </div>
+    <ul v-else-if="users.length" class="RecordList">
+      <li
+        v-for="user in users"
+        :key="user.id"
+        :class="[user.id === +userId && 'selectedRecord', 'RecordItem']"
+        @click="$emit('update:user-id', user.id+'')"
+      >{{ user.name }}</li>
+    </ul>
+    <p v-else>Нет данных</p>
   </section>
 </template>
 

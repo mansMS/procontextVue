@@ -1,48 +1,87 @@
 <template>
-  <div>
-    <ul class="CommentsList">
-      <li
-        v-for="comment in comments.slice(0, displayedCommentsCount)"
-        :key="comment.id"
-        class="CommentsList-Item"
-      >
-        <p>{{comment.email}}</p>
-        <p>{{comment.body}}</p>
-        <p>{{comment.name}}</p>
-      </li>
-      <div v-if="displayedCommentsCount < comments.length" class="AddCommentsBlock">
-        <button class="AddCommentsBlock-AddButton" @click.stop="addComments">еще</button>
-      </div>
-    </ul>
-    <div class="CreateComment">
-      <input
-        class="CreateComment-Area"
-        placeholder="Введите комментарий"
-        :value="newComment"
-        @input="$emit('update:new-comment', $event.target.value)"
-      />
-      <button class="CreateComment-Button" @click.prevent="$emit('create-comment')">Отправить</button>
+  <div class="Comments">
+    <div v-if="loading" class="Spinner">
+      <Spinner />
+    </div>
+    <div>
+      <ul class="CommentsList">
+        <li v-for="comment in filteComments" :key="comment.id" class="CommentsList-Item">
+          <p>{{comment.email}}</p>
+          <p>{{comment.body}}</p>
+          <p>{{comment.name}}</p>
+        </li>
+        <div v-if="filteComments.length < comments.length" class="AddCommentsBlock">
+          <button class="AddCommentsBlock-AddButton" @click.stop="addComments">еще</button>
+        </div>
+      </ul>
+      <CreateComment @newComment="createComment($event)" />
     </div>
   </div>
 </template>
 
 <script>
-const COMMENTS_PAGE_SIZE = 2;
+import CreateComment from "./CreateComment.vue";
+import Spinner from "./Spinner";
+import axios from "axios";
+
+const COMMENTS_PART_SIZE = 2;
 
 export default {
   name: "Comments",
+  components: {
+    CreateComment,
+    Spinner
+  },
   props: {
-    comments: Array,
-    newComment: String
+    postId: String
   },
   data() {
     return {
-      displayedCommentsCount: COMMENTS_PAGE_SIZE
+      comments: [],
+      filteComments: [],
+      loading: false
     };
+  },
+  mounted() {
+    this.fetchComments(this.postId);
   },
   methods: {
     addComments() {
-      this.displayedCommentsCount += COMMENTS_PAGE_SIZE;
+      this.filteComments = this.comments.slice(
+        0,
+        this.filteComments.length + COMMENTS_PART_SIZE
+      );
+    },
+    fetchComments: async function(id) {
+      this.loading = true;
+      await axios
+        .get(`https://jsonplaceholder.typicode.com/posts/${id}/comments`)
+        .then(response => {
+          this.comments = response.data;
+          this.filteComments = response.data.slice(0, COMMENTS_PART_SIZE);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+      this.loading = false;
+    },
+    createComment: async function(newComment) {
+      if (newComment.trim().length) {
+        const newCommentObj = {
+          id: this.comments.length + 1,
+          email: "qwerty@mail.ru",
+          name: "NameName",
+          body: this.newComment
+        };
+        axios
+          .put(
+            `https://jsonplaceholder.typicode.com/posts/${this.postId}/comments`,
+            newCommentObj
+          )
+          .then(response => console.log(response.status))
+          .catch(error => console.log(error));
+      }
+      this.newComment = "";
     }
   }
 };
@@ -87,5 +126,9 @@ export default {
     border: 1px solid #d8d8ff;
     background: #fff;
   }
+}
+
+.Comments .SpinnerBlock {
+  background: #f9f9ff;
 }
 </style>

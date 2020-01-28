@@ -11,7 +11,7 @@
         v-model="postBody"
       />
     </div>
-    <button class="AddPostForm-Button" @click.prevent="createPost(); showForm=false">Добавить</button>
+    <button class="AddPostForm-Button" @click.prevent="createPost()">Добавить</button>
   </form>
 </template>
 

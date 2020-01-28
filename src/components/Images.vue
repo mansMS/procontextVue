@@ -1,38 +1,36 @@
 <template>
   <section class="Images">
-    <template v-if="loading">
-      <div class="Spinner">
-        <Spinner />
-      </div>
-    </template>
-    <template v-else-if="imageId">
-      <div class="Images-SelectedImage">
+    <div v-if="loading" class="Spinner">
+      <Spinner />
+    </div>
+    <div v-else-if="imagesList[albumId]">
+      <div v-if="imageId" class="Images-SelectedImage">
         <img :src="imageURL" />
       </div>
-    </template>
-    <div class="ImagesList">
-      <div v-for="image in filterImages" :key="image.id" class="ImagesList-ImageBlock">
-        <div :class="[image.id+'' === imageId && 'ImagesList-SelectedImg']">
-          <img
-            :src="image.thumbnailUrl"
-            alt="thumbnailImage"
-            class="ImagesList-Item"
-            @click="$emit('update:image-id', image.id+'')"
-          />
+      <div class="ImagesList">
+        <div v-for="image in filterImages" :key="image.id" class="ImagesList-ImageBlock">
+          <div :class="[image.id+'' === imageId && 'ImagesList-SelectedImg']">
+            <img
+              :src="image.thumbnailUrl"
+              alt="thumbnailImage"
+              class="ImagesList-Item"
+              @click="$emit('update:image-id', image.id+'')"
+            />
+          </div>
         </div>
       </div>
-    </div>
-    <template v-if="displayedImagesCount < images.length">
-      <div class="AddButtonBlock">
+      <div v-if="this.filterImages.length < imagesList[albumId].length" class="AddButtonBlock">
         <button class="Images-AddImageBtn" @click="addImages">Еще</button>
       </div>
-    </template>
+    </div>
   </section>
 </template>
 
 <script>
 import Spinner from "./Spinner";
 import axios from "axios";
+
+const IMAGES_PART_SIZE = 10;
 
 export default {
   name: "Images",
@@ -46,41 +44,39 @@ export default {
   data() {
     return {
       imagesList: {},
-      images: [],
-      displayedImagesCount: 10,
+      filterImages: [],
       loading: false
     };
   },
   watch: {
     albumId(id) {
-      this.images = [];
       this.fetchData(id);
     }
   },
   computed: {
-    filterImages() {
-      return this.images.slice(0, this.displayedImagesCount);
-    },
     imageURL() {
-      return this.images.filter(image => image.id + "" === this.imageId)[0].url;
+      return this.imagesList[this.albumId].filter(
+        image => image.id + "" === this.imageId
+      )[0].url;
     }
   },
   methods: {
     addImages() {
-      this.displayedImagesCount += 10;
+      this.filterImages = this.imagesList[this.albumId].slice(
+        0,
+        this.filterImages.length + IMAGES_PART_SIZE
+      );
     },
 
     fetchData: async function(albumId) {
-      if (albumId in this.imagesList) {
-        this.images = this.imagesList[albumId];
-      } else {
+      if (!(albumId in this.imagesList)) {
         this.loading = true;
 
         await axios
           .get(`https://jsonplaceholder.typicode.com/photos?albumId=${albumId}`)
           .then(response => {
-            this.images = response.data;
             this.imagesList[albumId] = response.data;
+            this.filterImages = response.data.slice(0, IMAGES_PART_SIZE);
           })
           .catch(error => {
             console.log(error);

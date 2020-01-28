@@ -1,27 +1,23 @@
 <template>
   <section class="Albums">
-    <template v-if="loading">
-      <div class="Spinner">
-        <Spinner />
-      </div>
-    </template>
-    <template v-else-if="albums.length">
-      <ul class="RecordList">
-        <li>
-          <input
-            v-model="filterInput"
-            class="Albums-FilterInput"
-            placeholder="Введине название альбома"
-          />
-        </li>
-        <li
-          v-for="album in filterAlbums"
-          :key="album.id"
-          :class="[album.id+'' === albumId && 'selectedRecord', 'RecordItem']"
-          @click="$emit('update:album-id', album.id+'')"
-        >{{ album.title }}</li>
-      </ul>
-    </template>
+    <div v-if="loading" class="Spinner">
+      <Spinner />
+    </div>
+    <ul v-else-if="albumsList[userId]" class="RecordList">
+      <li>
+        <input
+          v-model="filterInput"
+          class="Albums-FilterInput"
+          placeholder="Введине название альбома"
+        />
+      </li>
+      <li
+        v-for="album in filterAlbums"
+        :key="album.id"
+        :class="[album.id+'' === albumId && 'selectedRecord', 'RecordItem']"
+        @click="$emit('update:album-id', album.id+'')"
+      >{{ album.title }}</li>
+    </ul>
   </section>
 </template>
 
@@ -41,7 +37,6 @@ export default {
   data() {
     return {
       albumsList: {},
-      albums: [],
       filterInput: "",
       loading: false
     };
@@ -54,7 +49,7 @@ export default {
   computed: {
     filterAlbums() {
       let self = this;
-      return this.albums.filter(function(album) {
+      return this.albumsList[this.userId].filter(function(album) {
         return album.title
           .toUpperCase()
           .includes(self.filterInput.toUpperCase());
@@ -63,15 +58,12 @@ export default {
   },
   methods: {
     fetchData: async function(userId) {
-      if (userId in this.albumsList) {
-        this.albums = this.albumsList[userId];
-      } else {
+      if (!(userId in this.albumsList)) {
         this.loading = true;
 
         await axios
           .get(`https://jsonplaceholder.typicode.com/albums/?userId=${userId}`)
           .then(response => {
-            this.albums = response.data;
             this.albumsList[userId] = response.data;
           })
           .catch(error => {
