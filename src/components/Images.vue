@@ -6,23 +6,23 @@
       </div>
     </template>
     <template v-else-if="imageId">
-      <SelectedImage v-bind:imageURL="images.filter(image => image.id+'' === imageId)[0].url" />
+      <SelectedImage :imageURL="images.filter(image => image.id+'' === imageId)[0].url" />
     </template>
     <div class="ImagesList">
-      <div v-for="image in filterImages" v-bind:key="image.id" class="ItemBlock">
-        <div v-bind:class="[image.id+'' === imageId && 'selected']">
+      <div v-for="image in filterImages" :key="image.id" class="ItemBlock">
+        <div :class="[image.id+'' === imageId && 'selected']">
           <img
-            v-bind:src="image.thumbnailUrl"
+            :src="image.thumbnailUrl"
             alt="thumbnailImage"
             class="ImageItem"
-            v-on:click="$emit('select-image', image.id+'')"
+            @click="$emit('select-image', image.id+'')"
           />
         </div>
       </div>
     </div>
     <template v-if="displayedImagesCount < images.length">
       <div class="AddImage">
-        <button v-on:click="addImages">Еще</button>
+        <button @click="addImages">Еще</button>
       </div>
     </template>
   </section>

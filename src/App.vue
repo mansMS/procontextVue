@@ -1,19 +1,15 @@
 <template>
   <div class="App">
     <PhotographersContainer
-      v-bind:userId="userId"
-      v-on:select-user="userId = $event; albumId=''; imageId=''"
+      :userId="userId"
+      @select-user="userId = $event; albumId=''; imageId=''"
     />
     <AlbumsContainer
-      v-bind:userId="userId"
-      v-bind:albumId="albumId"
-      v-on:select-album="albumId = $event; imageId=''"
+      :userId="userId"
+      :albumId="albumId"
+      @select-album="albumId = $event; imageId=''"
     />
-    <ImagesContainer
-      v-bind:albumId="albumId"
-      v-bind:imageId="imageId"
-      v-on:select-image="imageId = $event"
-    />
+    <ImagesContainer :albumId="albumId" :imageId="imageId" @select-image="imageId = $event" />
     <PostsContainer />
   </div>
 </template>

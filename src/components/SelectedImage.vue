@@ -1,6 +1,6 @@
 <template>
   <section class="SelectedImage">
-    <img v-bind:src="imageURL" />
+    <img :src="imageURL" />
   </section>
 </template>
 

@@ -1,14 +1,15 @@
 <template>
   <Photographers
-    v-bind:users="users"
-    v-bind:userId="userId"
-    v-bind:loading="loading"
-    v-on:select-user="$emit('select-user', $event)"
+    :users="users"
+    :userId="userId"
+    :loading="loading"
+    @select-user="$emit('select-user', $event)"
   />
 </template>
 
 <script>
 import Photographers from "../components/Photographers.vue";
+import axios from "axios";
 
 export default {
   name: "PhotographersContainer",
@@ -29,8 +30,6 @@ export default {
   methods: {
     fetchData: async function() {
       this.loading = true;
-
-      const axios = require("axios");
 
       await axios
         .get("https://jsonplaceholder.typicode.com/users")

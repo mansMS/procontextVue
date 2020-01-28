@@ -1,15 +1,16 @@
 <template>
   <Images
-    v-bind:images="images"
-    v-bind:albumId="albumId"
-    v-bind:imageId="imageId"
-    v-bind:loading="loading"
-    v-on:select-image="$emit('select-image', $event)"
+    :images="images"
+    :albumId="albumId"
+    :imageId="imageId"
+    :loading="loading"
+    @select-image="$emit('select-image', $event)"
   />
 </template>
 
 <script>
 import Images from "../components/Images.vue";
+import axios from "axios";
 
 export default {
   name: "ImagesContainer",
@@ -37,8 +38,6 @@ export default {
         this.images = this.imagesList[albumId];
       } else {
         this.loading = true;
-
-        const axios = require("axios");
 
         await axios
           .get(`https://jsonplaceholder.typicode.com/photos?albumId=${albumId}`)

@@ -1,20 +1,25 @@
 <template>
   <Posts
-    :posts="posts.slice((pageNumber-1)*3, (pageNumber-1)*3+3)"
     :comments="comments"
-    :posrForCommentsId="posrForCommentsId"
+    :posts="paginatedPosts"
     :pageNumber="pageNumber"
     :pageCount="pageCount"
-    v-bind:loading="loading"
-    @show-comments="posrForCommentsId = $event"
-    @go-to-page="pageNumber = $event"
-    @create-post="newPost = $event"
-    @create-comment="newCommentObj = $event"
+    :selected-post-id.sync="selectedPostId"
+    :post-title.sync="postTitle"
+    :post-body.sync="postBody"
+    :new-comment.sync="newComment"
+    :go-to-page.sync="pageNumber"
+    @create-post="createPost()"
+    @create-comment="createComment($event)"
+    :loading="loading"
   />
 </template>
 
 <script>
 import Posts from "../components/Posts.vue";
+import axios from "axios";
+
+const POST_PAGE_SIZE = 3;
 
 export default {
   name: "PostsContainer",
@@ -22,12 +27,13 @@ export default {
   data() {
     return {
       posts: [],
-      posrForCommentsId: "",
+      selectedPostId: "",
       comments: [],
       pageNumber: 1,
-      pageCount: 1,
-      newPost: {},
-      newCommentObj: {},
+      postTitle: "",
+      postBody: "",
+      newComment: "",
+      newCommentPostId: "",
       loading: false
     };
   },
@@ -37,32 +43,26 @@ export default {
   },
 
   watch: {
-    posrForCommentsId(id) {
+    selectedPostId(id) {
       id && this.fetchComments(id);
-    },
-    posts(posts) {
-      this.pageCount = Math.ceil(posts.length / 3);
-    },
-    newPost(post) {
-      this.createPost(post);
-    },
-    newCommentObj(commentObj) {
-      this.createComment(commentObj);
+      this.newComment = "";
     }
   },
   computed: {
-    paginatedData() {
-      const start = this.pageNumber * 3;
-      const end = start + 3;
-      return this.comments.slice(start, end);
+    pageCount: function() {
+      return Math.ceil(this.posts.length / POST_PAGE_SIZE);
+    },
+    paginatedPosts: function() {
+      return this.posts.slice(
+        (this.pageNumber - 1) * POST_PAGE_SIZE,
+        (this.pageNumber - 1) * POST_PAGE_SIZE + POST_PAGE_SIZE
+      );
     }
   },
 
   methods: {
     fetchPosts: async function() {
       this.loading = true;
-
-      const axios = require("axios");
 
       await axios
         .get("https://jsonplaceholder.typicode.com/posts")
@@ -77,8 +77,6 @@ export default {
     },
 
     fetchComments: async function(id) {
-      const axios = require("axios");
-
       await axios
         .get(`https://jsonplaceholder.typicode.com/posts/${id}/comments`)
         .then(response => {
@@ -89,14 +87,13 @@ export default {
         });
     },
 
-    createPost: async function(post) {
-      if (post.postBody.trim().length && post.postTitle.trim().length) {
-        const axios = require("axios");
+    createPost: async function() {
+      if (this.postBody.trim().length && this.postTitle.trim().length) {
         const newPostObj = {
           id: this.posts.length + 1,
           userId: 12345,
-          title: post.postTitle,
-          body: post.postBody
+          title: this.postTitle,
+          body: this.postBody
         };
         axios
           .put(
@@ -106,26 +103,27 @@ export default {
           .then(response => console.log(response.status))
           .catch(error => console.log(error));
       }
+      this.postTitle = "";
+      this.postBody = "";
     },
 
-    createComment: async function(commentObj) {
-      if (commentObj.body.trim().length) {
-        const axios = require("axios");
+    createComment: async function(postId) {
+      if (this.newComment.trim().length) {
         const newCommentObj = {
           id: this.comments.length + 1,
           email: "qwerty@mail.ru",
           name: "NameName",
-          body: commentObj.body
+          body: this.newComment
         };
-
         axios
           .put(
-            `https://jsonplaceholder.typicode.com/posts/${commentObj.postId}/comments`,
+            `https://jsonplaceholder.typicode.com/posts/${postId}/comments`,
             newCommentObj
           )
           .then(response => console.log(response.status))
           .catch(error => console.log(error));
       }
+      this.newComment = "";
     }
   },
 

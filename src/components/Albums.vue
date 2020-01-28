@@ -12,9 +12,9 @@
         </li>
         <li
           v-for="album in filterAlbums"
-          v-bind:key="album.id"
-          v-bind:class="[album.id+'' === albumId && 'selected', 'AlbumItem']"
-          v-on:click="$emit('select-album', album.id+'')"
+          :key="album.id"
+          :class="[album.id+'' === albumId && 'selected', 'AlbumItem']"
+          @click="$emit('select-album', album.id+'')"
         >{{ album.title }}</li>
       </ul>
     </template>

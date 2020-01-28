@@ -9,9 +9,9 @@
       <ul class="PhotographersList">
         <li
           v-for="user in users"
-          v-bind:key="user.id"
-          v-bind:class="[user.id === +userId && 'selected', 'PhotographerItem']"
-          v-on:click="$emit('select-user', user.id+'')"
+          :key="user.id"
+          :class="[user.id === +userId && 'selected', 'PhotographerItem']"
+          @click="$emit('select-user', user.id+'')"
         >{{ user.name }}</li>
       </ul>
     </template>

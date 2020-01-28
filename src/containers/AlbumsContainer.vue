@@ -1,15 +1,16 @@
 <template>
   <Albums
-    v-bind:albums="albums"
-    v-bind:userId="userId"
-    v-bind:albumId="albumId"
-    v-bind:loading="loading"
-    v-on:select-album="$emit('select-album', $event)"
+    :albums="albums"
+    :userId="userId"
+    :albumId="albumId"
+    :loading="loading"
+    @select-album="$emit('select-album', $event)"
   />
 </template>
 
 <script>
 import Albums from "../components/Albums.vue";
+import axios from "axios";
 
 export default {
   name: "AlbumsContainer",
@@ -36,8 +37,6 @@ export default {
         this.albums = this.albumsList[userId];
       } else {
         this.loading = true;
-
-        const axios = require("axios");
 
         await axios
           .get(`https://jsonplaceholder.typicode.com/albums/?userId=${userId}`)
