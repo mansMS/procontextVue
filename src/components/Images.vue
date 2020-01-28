@@ -51,6 +51,12 @@ export default {
       loading: false
     };
   },
+  watch: {
+    albumId(id) {
+      this.images = [];
+      this.fetchData(id);
+    }
+  },
   computed: {
     filterImages() {
       return this.images.slice(0, this.displayedImagesCount);
@@ -59,13 +65,6 @@ export default {
       return this.images.filter(image => image.id + "" === this.imageId)[0].url;
     }
   },
-  watch: {
-    albumId(id) {
-      this.images = [];
-      this.fetchData(id);
-    }
-  },
-
   methods: {
     addImages() {
       this.displayedImagesCount += 10;

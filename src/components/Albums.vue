@@ -46,6 +46,11 @@ export default {
       loading: false
     };
   },
+  watch: {
+    userId(id) {
+      this.fetchData(id);
+    }
+  },
   computed: {
     filterAlbums() {
       let self = this;
@@ -56,12 +61,6 @@ export default {
       });
     }
   },
-  watch: {
-    userId(id) {
-      this.fetchData(id);
-    }
-  },
-
   methods: {
     fetchData: async function(userId) {
       if (userId in this.albumsList) {
